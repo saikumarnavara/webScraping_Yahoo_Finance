@@ -1,11 +1,7 @@
 import pandas as pd
 import mysql.connector
 
-connection = mysql.connector.connect(
-    host = "uaa-db.mysql.database.azure.com",
-    user = "wadmin@uaa-db",
-    password = ("Tcs#1234") 
-    )
+
 
 ticker_input = input("Enter Company Code:- ")
 
