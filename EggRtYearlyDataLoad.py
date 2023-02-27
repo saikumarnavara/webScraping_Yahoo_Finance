@@ -19,35 +19,6 @@ chrome_path = r"C:\Users\Jawahar\Desktop\chromedriver_win32\chromedriver.exe"
 s = Service(chrome_path)
 driver = webdriver.Chrome(service=s)
 
-engine = create_engine("mysql://%s:Tcs#1234@uaa-db-migrated.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin"))
-
-connection = mysql.connector.connect(
-	host = "uaa-db-migrated.mysql.database.azure.com",
-	user = "wadmin",
-	password = ("Tcs#1234"),
-    database ="dt_retail"
- )
-# connection = pymysql.connect(host="uaa-db-migrated.mysql.database.azure.com",
-#                              user= "wadmin",
-#                              password=("Tcs#1234"),
-#                              db="dt_retail",
-#                              cursorclass=pymysql.cursors.DictCursor,
-#                              ssl={"fake_flag_to_enable_tls":True})
-# engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
-# connection = mysql.connector.connect(
-#     host = "uaa-db.mysql.database.azure.com",
-#     user = "wadmin@uaa-db",
-#     password = ("Tcs#1234") 
-#     )
-
-# mydb = mysql.connector.connect(
-# 	host = "uaa-db.mysql.database.azure.com",
-# 	user = "wadmin@uaa-db",
-# 	password = ("Tcs#1234") 
-#  )
-
-# mydbcursor = mydb.cursor()
-# mydbcursor.execute("show databases")
 
 def getMetrics():
 	# read in your SQL query results using pandas
