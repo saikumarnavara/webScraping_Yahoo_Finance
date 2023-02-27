@@ -21,18 +21,31 @@ driver = webdriver.Chrome(service=s)
 
 # Creating connection string 
 #credentials = "mysql://wadmin@uaa-db:%s@uaa-db.mysql.database.azure.com:3306"
+# engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+# connection = mysql.connector.connect(
+#     host = "uaa-db.mysql.database.azure.com",
+#     user = "wadmin@uaa-db",
+#     password = ("Tcs#1234") 
+#     )
 
-engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+engine = create_engine("mysql://%s:Tcs#1234@uaa-db-migrated.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin"))
 
-# Creating connection object
-mydb = mysql.connector.connect(
-	host = "uaa-db.mysql.database.azure.com",
-	user = "wadmin@uaa-db",
-	password = ("Tcs#1234") 
+connection = mysql.connector.connect(
+	host = "uaa-db-migrated.mysql.database.azure.com",
+	user = "wadmin",
+	password = ("Tcs#1234"),
+    database ="dt_retail"
  )
 
-mydbcursor = mydb.cursor()
-mydbcursor.execute("show databases")
+# Creating connection object
+# mydb = mysql.connector.connect(
+# 	host = "uaa-db.mysql.database.azure.com",
+# 	user = "wadmin@uaa-db",
+# 	password = ("Tcs#1234") 
+#  )
+
+# mydbcursor = mydb.cursor()
+# mydbcursor.execute("show databases")
 
 
 def getCompanyCodes():
@@ -143,6 +156,8 @@ def get_data_from_yahooFinance(url_link,ticker):
     df.set_index("Breakdown")
     first_column = df.pop('Ticker')
     df.insert(0, 'Ticker', first_column)
+    df = df.loc[:, ~df.columns.duplicated()]
+    print(df)
     return df
 
 
@@ -256,6 +271,17 @@ def get_tickers_lists():
     tickers_list = tickers_string.split("\n")
     tickers_list = list(filter(None,tickers_list))
     return tickers_list
+
+# def get_tickers_lists():
+#     sql_select_Query = "SELECT * FROM dt_retail.company_tbl WHERE stock_exchange != 'PRIVATE' and stock_exchange != 'BVL';"
+#     cursor = connection.cursor()
+#     cursor.execute(sql_select_Query)
+#     records = cursor.fetchall()
+#     company_codes = []
+#     for row in records:
+#         codes  = (row[0]).replace(" ","")
+#         company_codes.append(codes)
+#     return company_codes
     
 def build_income_statement_url(ticker):
     url=f"https://finance.yahoo.com/quote/{ticker}/financials?p={ticker}"
@@ -331,6 +357,7 @@ def createBSdatabase(df):
                 bSmetDf.loc[len(bSmetDf.index)] = new_row
     print("--- bsmetDf ---")
     print(bSmetDf)
+    bSmetDf.to_excel("ruff.xlsx")  
     populateStaging('met_data_staging_tbl', bSmetDf)
     mergeDataIntotbl('balance_sheet_tbl')
 
@@ -474,7 +501,7 @@ def createISTTMdatabase(df):
                 ttm = i[c]
             if (c == 'TTM') :
                 #today  = date.today()
-                ##lastqtrtime = datetime.datetime.now() - timedelta(days=90)
+                # lastqtrtime = datetime.datetime.now() - timedelta(days=90)
                 current_time = datetime.now() 
                 headerDate = str(getYearFromDt(current_time)) + " " + getQtrFromDt(current_time)
                 yearDate = headerDate.split(" ")[0]
@@ -587,7 +614,7 @@ def get_income_statement_data():
         df1=get_data_from_yahooFinance(income_statement_url,ticker)
         df1.to_excel("new_is.xlsx")
         createISdatabase(df1)
-        createISTTMdatabase(df1)
+        # createISTTMdatabase(df1)
         df1.drop(df1.index,inplace=True)
  
     
@@ -599,7 +626,7 @@ def get_balance_sheet_data():
         df1=get_data_from_yahooFinance(balance_sheet_url,ticker)
         df1.to_excel("new_bs.xlsx")
         createBSdatabase(df1)
-        createBSTTMdatabase(df1)
+        # createBSTTMdatabase(df1)
         df1.drop(df1.index,inplace=True)
 
        
@@ -611,7 +638,7 @@ def get_cash_flow_data():
         df1=get_data_from_yahooFinance(cash_flow_url,ticker)
         df1.to_excel("new_cf.xlsx")
         createCFdatabase(df1)
-        createCFTTMdatabase(df1)
+        # createCFTTMdatabase(df1)
         df1.drop(df1.index,inplace=True)
 
         

@@ -8,13 +8,20 @@ from urllib.parse import quote_plus
 import profilehooks
 
 
-engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+# engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+
+# connection = mysql.connector.connect(
+#     host = "uaa-db.mysql.database.azure.com",
+#     user = "wadmin@uaa-db",
+#     password = ("Tcs#1234") 
+    # )
+engine = create_engine("mysql://%s:Tcs#1234@uaa-db-migrated.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin"))
 
 connection = mysql.connector.connect(
-    host = "uaa-db.mysql.database.azure.com",
-    user = "wadmin@uaa-db",
-    password = ("Tcs#1234") 
-    )
+	host = "uaa-db-migrated.mysql.database.azure.com",
+	user = "wadmin",
+	password = ("Tcs#1234") 
+ )
 
 def getData(ticker, compname, frequency):
     try:

@@ -1,4 +1,5 @@
 import time
+import pymysql
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -18,16 +19,35 @@ chrome_path = r"C:\Users\Jawahar\Desktop\chromedriver_win32\chromedriver.exe"
 s = Service(chrome_path)
 driver = webdriver.Chrome(service=s)
 
-engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+engine = create_engine("mysql://%s:Tcs#1234@uaa-db-migrated.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin"))
 
-mydb = mysql.connector.connect(
-	host = "uaa-db.mysql.database.azure.com",
-	user = "wadmin@uaa-db",
-	password = ("Tcs#1234") 
+connection = mysql.connector.connect(
+	host = "uaa-db-migrated.mysql.database.azure.com",
+	user = "wadmin",
+	password = ("Tcs#1234"),
+    database ="dt_retail"
  )
+# connection = pymysql.connect(host="uaa-db-migrated.mysql.database.azure.com",
+#                              user= "wadmin",
+#                              password=("Tcs#1234"),
+#                              db="dt_retail",
+#                              cursorclass=pymysql.cursors.DictCursor,
+#                              ssl={"fake_flag_to_enable_tls":True})
+# engine = create_engine("mysql://%s:Tcs#1234@uaa-db.mysql.database.azure.com:3306/dt_retail" % quote_plus("wadmin@uaa-db"))
+# connection = mysql.connector.connect(
+#     host = "uaa-db.mysql.database.azure.com",
+#     user = "wadmin@uaa-db",
+#     password = ("Tcs#1234") 
+#     )
 
-mydbcursor = mydb.cursor()
-mydbcursor.execute("show databases")
+# mydb = mysql.connector.connect(
+# 	host = "uaa-db.mysql.database.azure.com",
+# 	user = "wadmin@uaa-db",
+# 	password = ("Tcs#1234") 
+#  )
+
+# mydbcursor = mydb.cursor()
+# mydbcursor.execute("show databases")
 
 def getMetrics():
 	# read in your SQL query results using pandas
@@ -325,6 +345,18 @@ def get_tickers_lists():
     tickers_list = tickers_string.split("\n")
     tickers_list = list(filter(None,tickers_list))
     return tickers_list
+
+# def get_tickers_lists():
+#     sql_select_Query = "SELECT * FROM dt_retail.company_tbl WHERE stock_exchange != 'PRIVATE' and stock_exchange != 'BVL';"
+#     cursor = connection.cursor()
+#     cursor.execute(sql_select_Query)
+#     records = cursor.fetchall()
+#     company_codes = []
+#     for row in records:
+#         codes  = (row[0]).replace(" ","")
+#         company_codes.append(codes)
+#     return company_codes
+
     
 def build_income_statement_url(ticker):
     url=f"https://finance.yahoo.com/quote/{ticker}/financials?p={ticker}"
