@@ -7,11 +7,7 @@ from sqlalchemy.engine import create_engine
 from urllib.parse import quote_plus
 import re
 
-connection = mysql.connector.connect(
-	host = "uaa-db-migrated.mysql.database.azure.com",
-	user = "wadmin",
-	password = ("Tcs#1234") 
- )
+
 def get_company_codes():
     sql_select_Query = "SELECT * FROM dt_retail.company_tbl WHERE stock_exchange != 'PRIVATE' and stock_exchange != 'BVL';"
     cursor = connection.cursor()
